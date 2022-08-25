@@ -1,0 +1,18 @@
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS ratings;
+
+CREATE TABLE IF NOT EXISTS movies (
+  id serial PRIMARY KEY,
+  movieId VARCHAR(255) UNIQUE,
+  title VARCHAR(255) NOT NULL,
+  genres VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ratings (
+  id serial PRIMARY KEY,
+  userId VARCHAR(255) NOT NULL,
+  movieId VARCHAR(255) NOT NULL,
+  rating INTEGER,
+  timestamp BIGINT
+);
