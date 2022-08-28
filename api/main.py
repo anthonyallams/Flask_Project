@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
 import psycopg2, psycopg2.extras
 from settings import DB_NAME, DB_USER, DB_PASSWORD
+from movies import Movie
+from ratings import Rating
 
 app = Flask(__name__)
 
@@ -23,29 +25,37 @@ def home():
 def movies():
     cursor = db_connect()
     cursor.execute('SELECT * FROM movies;')
-    movies_records = cursor.fetchall()
-    return jsonify(movies_records)
+    data_response = cursor.fetchall()
+    movies = [Movie(movie) for movie in data_response]
+    movie_dicts = [movie.__dict__ for movie in movies]
+    return jsonify(movie_dicts)
 
 @app.route('/movies/<int:id>')
 def movie(id):
     cursor = db_connect()
     cursor.execute('SELECT * FROM movies WHERE id = %s',(id,))
-    movies_record = cursor.fetchone()
-    return jsonify(movies_record)
+    data_response = cursor.fetchone()
+    movie_details = Movie(data_response)
+    movie = movie_details.__dict__
+    return jsonify(movie)
     
 @app.route('/ratings')
 def ratings():
     cursor = db_connect()
-    cursor.execute('SELECT * FROM ratings;')
-    ratings_records = cursor.fetchall()
-    return jsonify(ratings_records)
+    cursor.execute('SELECT * FROM ratings limit 100;')
+    data_response = cursor.fetchall()
+    ratings = [Rating(rating) for rating in data_response]
+    ratings_dict = [rating.__dict__ for rating in ratings]
+    return jsonify(ratings_dict)
 
 @app.route('/ratings/<int:id>')
 def rating(id):
     cursor = db_connect()
     cursor.execute('SELECT * FROM ratings WHERE id = %s',(id,))
     ratings_record = cursor.fetchone()
-    return jsonify(ratings_record)
+    rating_details = Rating(ratings_record)
+    rating = rating_details.__dict__
+    return jsonify(rating)
 
 
 app.run(debug=True)
