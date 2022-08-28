@@ -1,0 +1,4 @@
+flask
+jsonify
+python-dotenv
+pytest
